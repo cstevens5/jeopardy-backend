@@ -56,4 +56,34 @@ router.get("/random", async (req, res) => {
   }
 });
 
+// route to get the game id given the air date
+router.get("/airdate/:airdate", async (req, res) => {
+  // destructure param
+  const { airdate } = req.params;
+
+  // Create range for the day
+  const start = new Date(airdate);
+  const end = new Date(airdate);
+  end.setDate(end.getDate() + 1);
+
+  try {
+    // query for the game id
+    const game = await Game.findOne({
+      air_date: { $gte: start, $lt: end },
+    });
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found for this airdate" });
+    }
+
+    const game_id = game.id;
+
+    // send back the game id
+    res.status(200).json({ game_id: game_id });
+  } catch (err) {
+    console.error("Error finding game id given the air date");
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;
