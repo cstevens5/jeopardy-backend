@@ -86,4 +86,22 @@ router.get("/airdate/:airdate", async (req, res) => {
   }
 });
 
+// route to get the game object with the given game id
+router.get("/game/:game_id", async (req, res) => {
+  const { game_id } = req.params;
+
+  try {
+    // fetch the game
+    const game = await Game.findOne({
+      id: game_id,
+    });
+
+    // return the game object
+    res.status(200).json(game);
+  } catch (err) {
+    console.error("Error finding game given the game id");
+    res.status(500).json({ error: "Server Error" });
+  }
+});
+
 export default router;
